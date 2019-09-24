@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/8d32344989.js"></script>
+    <title>Register/Login</title>
+  </head>
+  <body>
+      <div class="container">
+            <h1 class="text-center text-primary">Register/Login</h1>
+            <div class="form" id="form-register">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" class="form-control" value="eve.holt@reqres.in"> 
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" class="form-control"> 
+            </div>
+            <button class="btn btn-primary" id="register-btn">Register</button>
+            <button class="btn btn-success" id="login-btn">Login</button>
+            </div>
+      </div>
+
+      <div class="alert alert-danger d-none" id="alert-error">
+          <span id="alert-error-msg"></span>
+          <button class="close" data-dismiss="alert">&times;</button>
+      </div>
+    
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <script>
+            console.log($('#username').val())
+            $('#register-btn').on('click',function(){
+                $.ajax({
+                    url: 'https://reqres.in/api/register',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "email": $('#username').val(),
+                        "password": $('#password').val()
+                    }),
+                    success: function(response){
+                        console.log('Success');
+                        console.log('ID: ' + response.id);
+                        console.log('Token: ' + response.token);
+                        var alertMessage = `
+                            <div id="login-successful" class="alert alert-success">
+                                Register Succesful!
+                                Welcome User: ${response.id}
+                            </div>
+                        `;
+                        $('#form-register').append(alertMessage);
+                        setTimeout(function(){
+                            $('#login-successful').remove();
+                        }, 2000);
+                    },
+                    error: function(response){
+                        console.log('Error: ' + response.responseJSON.error);
+                        $('#alert-error').toggleClass('d-none');
+                        $('#alert-error-msg').text('Error: ' + response.responseJSON.error);
+                        setTimeout(function(){
+                            $('#alert-error').toggleClass('d-none');
+                        }, 3000);
+                    },
+                    statusCode: {
+                        400: function(){
+                            console.log('Error: ' + response.responseJSON.error)
+                        }
+                    }
+                });
+
+            });
+        </script>
+  </body>
+</html>
